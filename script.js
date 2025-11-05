@@ -1,85 +1,104 @@
-// add javascript here
-// time
+// ===== Display Date =====
 date.textContent = time();
 
-//global variables/constants
+function time() {
+    let d = new Date();
+    // Concatenate the date
+    let str = (d.getMonth() + 1) + "/" + d.getDate() + "/" + d.getFullYear();
+    return str;
+}
+
+// ===== Global Variables =====
 let score, answer, level;
 const levelArr = document.getElementsByName("level");
 const scoreArr = [];
 
-//event listeners
+const playBtn = document.getElementById("playBtn");
+const guessBtn = document.getElementById("guessBtn");
+const giveUpBtn = document.getElementById("giveUp");
+const guessInput = document.getElementById("guess");
+const msg = document.getElementById("msg");
+
+// ===== Event Listeners =====
 playBtn.addEventListener("click", play);
 guessBtn.addEventListener("click", makeGuess);
+giveUpBtn.addEventListener("click", giveUp);
 
-function time(){
-    let d = new Date();
-    //concatenate the date and time
-    str = d.getMonth()+1 + "/" + d.getDate() + "/" + d.getFullYear();
-    //update here
-    return str;
-}
-
-function play(){
+// ===== Functions =====
+function play() {
     playBtn.disabled = true;
     guessBtn.disabled = false;
-    guess.disabled = false;
-    for(let i=0; i<levelArr.length; i++){
+    guessInput.disabled = false;
+    giveUpBtn.disabled = false;
+
+    // Disable level buttons
+    for (let i = 0; i < levelArr.length; i++) {
         levelArr[i].disabled = true;
-        if(levelArr[i].checked){
+        if (levelArr[i].checked) {
             level = levelArr[i].value;
         }
     }
-    answer = Math.floor(Math.random()*level)+1;
-    msg.textContent = "Guess a number 1- " + level;
-    guess.placeholder = answer;
+
+    // Generate random answer
+    answer = Math.floor(Math.random() * level) + 1;
+    msg.textContent = "Guess a number between 1 and " + level;
+    guessInput.value = "";
     score = 0;
 }
 
-function makeGuess(){
-    let userGuess = parseInt(guess.value);
-    if(isNaN(userGuess) || userGuess < 1 || userGuess > level){
-        msg.textContent = "INVALID, guess a number!";
+function makeGuess() {
+    let userGuess = parseInt(guessInput.value);
+
+    if (isNaN(userGuess) || userGuess < 1 || userGuess > level) {
+        msg.textContent = "❌ Invalid input! Enter a number between 1 and " + level + ".";
         return;
     }
+
     score++;
-    if(userGuess < answer){
-        msg.textContent = "Too low, guess again";
-    }
-    else if(userGuess > answer){
-        msg.textContent = "Too high, guess again";
-    }
-    else{
-        msg.textContent = "Correct! It took " + score + " tries.";
-        reset();
+
+    if (userGuess < answer) {
+        msg.textContent = "Too low! Try again.";
+    } else if (userGuess > answer) {
+        msg.textContent = "Too high! Try again.";
+    } else {
+        msg.textContent = "🎉 Correct! You guessed it in " + score + " tries.";
         updateScore();
+        reset();
     }
 }
-function reset(){
+
+function giveUp() {
+    msg.textContent = "The correct answer was " + answer + ". Better luck next time!";
+    reset();
+}
+
+function reset() {
     guessBtn.disabled = true;
-    guess.value = "";
-    guess.placeholder = "";
-    guess.disabled = true;
+    guessInput.disabled = true;
+    giveUpBtn.disabled = true;
     playBtn.disabled = false;
-    for(let i=0; i<levelArr.length; i++){
+
+    for (let i = 0; i < levelArr.length; i++) {
         levelArr[i].disabled = false;
     }
 }
 
-function updateScore(){
-    scoreArr.push(score); //adds current score to array of scores
-    wins.textContent = "Total wins: " + scoreArr.length;
-    let sum = 0;
-    scoreArr.sort((a,b)=> a-b); //sorts accending
-    //leaderboard?
+function updateScore() {
+    scoreArr.push(score);
+    wins.textContent = "Total Wins: " + scoreArr.length;
+
+    // Sort ascending
+    scoreArr.sort((a, b) => a - b);
+
+    // Update leaderboard
     const lb = document.getElementsByName("leaderboard");
-
-
-    for(let i=0; i<scoreArr.length; i++){
-        sum+= scoreArr[i];
-        if(i < lb.length){
-            lb[i].textContent = scoreArr[i];
-        }
+    for (let i = 0; i < lb.length; i++) {
+        lb[i].textContent = scoreArr[i] ? scoreArr[i] : "--";
     }
-    let avg = sum/scoreArr.length;
+
+    // Average score
+    let sum = scoreArr.reduce((a, b) => a + b, 0);
+    let avg = sum / scoreArr.length;
     avgScore.textContent = "Average Score: " + avg.toFixed(2);
 }
+
