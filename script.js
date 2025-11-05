@@ -101,4 +101,4 @@ function updateScore() {
     let avg = sum / scoreArr.length;
     avgScore.textContent = "Average Score: " + avg.toFixed(2);
 }
-
+ 
