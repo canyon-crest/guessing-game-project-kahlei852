@@ -112,9 +112,9 @@ function makeGuess() {
 
         // Performance feedback
         let performance;
-        if (score <= 3) performance = "Excellent! 🌟";
-        else if (score <= 6) performance = "Pretty good! 👍";
-        else performance = "You can do better next time! 😅";
+        if (score <= 3) performance = "Excellent! ";
+        else if (score <= 6) performance = "Pretty good! ";
+        else performance = "You can do better next time! ";
 
         msg.textContent = `🎉 Correct, ${playerName}! You guessed it in ${score} tries and ${roundTime}s. ${performance}`;
 
@@ -126,7 +126,7 @@ function makeGuess() {
 function giveUp() {
     // When user gives up, set score to range value
     score = parseInt(level);
-    msg.textContent = `😞 You gave up, ${playerName}. The correct number was ${answer}. Score set to ${score}.`;
+    msg.textContent = `You gave up, ${playerName}. The correct number was ${answer}. Score set to ${score}.`;
     endTime = new Date().getTime();
 
     const roundTime = ((endTime - startTime) / 1000).toFixed(2);
