@@ -95,12 +95,15 @@ function makeGuess() {
 
     // Temperature feedback
     if (diff >= level / 2) {
-        msg.textContent = "❄️ Cold! Try again.";
-    } else if (diff >= level / 4) {
-        msg.textContent = "🌡️ Warm! Getting closer.";
-    } else if (diff > 0) {
-        msg.textContent = "🔥 Hot! You're very close!";
-    }
+    msg.textContent = "❄️ Cold! Try again.";
+    flashBackground("rgb(100, 180, 255)"); // blue
+} else if (diff >= level / 4) {
+    msg.textContent = "🌡️ Warm! Getting closer.";
+    flashBackground("rgb(255, 180, 80)"); // orange
+} else if (diff > 0) {
+    msg.textContent = "🔥 Hot! You're very close!";
+    flashBackground("rgb(255, 80, 80)"); // red
+}
 
     if (userGuess === answer) {
         endTime = new Date().getTime();
@@ -117,6 +120,11 @@ function makeGuess() {
         else performance = "You can do better next time! ";
 
         msg.textContent = `🎉 Correct, ${playerName}! You guessed it in ${score} tries and ${roundTime}s. ${performance}`;
+
+        launchConfetti(); 
+
+        flashBackground("rgb(80, 255, 120)"); // green flash for correct guess
+
 
         updateScore(roundTime);
         reset();
@@ -175,4 +183,46 @@ function updateScore(roundTime) {
     document.getElementById("timeStats").textContent =
         `⏱️ Fastest Time: ${fastestTime === Infinity ? "N/A" : fastestTime + "s"} | Avg Time: ${avgTime}s`;
 }
+
+// ====== Bonus Feature: Confetti Celebration ======
+function launchConfetti() {
+    const duration = 2 * 1000;
+    const end = Date.now() + duration;
+
+    (function frame() {
+        // create bursts of confetti
+        confetti({
+            particleCount: 5,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 }
+        });
+        confetti({
+            particleCount: 5,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 }
+        });
+
+        if (Date.now() < end) {
+            requestAnimationFrame(frame);
+        }
+    })();
+}  
+
+// ====== Bonus Feature: Background Flash Effect ======
+function flashBackground(color) {
+    const body = document.body;
+    const original = window.getComputedStyle(body).backgroundColor;
+
+    // Change background instantly
+    body.style.transition = "background-color 0.3s ease";
+    body.style.backgroundColor = color;
+
+    // Fade back to normal after a moment
+    setTimeout(() => {
+        body.style.backgroundColor = original;
+    }, 700);
+}
+
 
